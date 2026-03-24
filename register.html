@@ -137,6 +137,10 @@
     if (Auth.isLoggedIn()) window.location.href = 'dashboard.html';
   });
 
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  }
+
   function showAlert(message, type = 'error') {
     document.getElementById('alert-area').innerHTML = `<div class="alert alert-${type}">${message}</div>`;
   }
@@ -201,7 +205,7 @@
     const terms     = document.getElementById('terms').checked;
 
     if (!firstName || !lastName) { showAlert('⚠️ Please enter your first and last name.'); return; }
-    if (!email || !email.includes('@') || !email.includes('.')) { showAlert('⚠️ Please enter a valid email address.'); return; }
+    if (!email || !isValidEmail(email)) { showAlert('⚠️ Please enter a valid email address.'); return; }
     if (password.length < 8) { showAlert('⚠️ Password must be at least 8 characters.'); return; }
     if (password !== confirm) { showAlert('⚠️ Passwords do not match.'); return; }
     if (!terms) { showAlert('⚠️ You must agree to the Terms of Service to continue.'); return; }

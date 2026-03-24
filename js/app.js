@@ -15,7 +15,7 @@ const Auth = {
   },
   getUser() {
     try { return JSON.parse(localStorage.getItem(this.SESSION_KEY)); }
-    catch { return null; }
+    catch (e) { console.error('Failed to parse user session:', e); return null; }
   },
   isLoggedIn() { return !!this.getUser(); }
 };
@@ -26,7 +26,7 @@ const Enrollment = {
 
   getAll() {
     try { return JSON.parse(localStorage.getItem(this.KEY)) || []; }
-    catch { return []; }
+    catch (e) { console.error('Failed to parse enrollments:', e); return []; }
   },
   isEnrolled(courseId) {
     return this.getAll().some(e => e.courseId === courseId);

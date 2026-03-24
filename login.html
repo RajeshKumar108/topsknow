@@ -69,10 +69,10 @@
     <div class="auth-divider">or continue with</div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <button class="btn btn-outline" onclick="socialLogin('Google')">
+      <button class="btn btn-outline" onclick="socialLogin('Google', event)">
         <span>🔵</span> Google
       </button>
-      <button class="btn btn-outline" onclick="socialLogin('GitHub')">
+      <button class="btn btn-outline" onclick="socialLogin('GitHub', event)">
         <span>⚫</span> GitHub
       </button>
     </div>
@@ -92,6 +92,10 @@
       window.location.href = 'dashboard.html';
     }
   });
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  }
 
   function showAlert(message, type = 'error') {
     const area = document.getElementById('alert-area');
@@ -123,7 +127,7 @@
     showAlert(`✅ Password reset link sent to <strong>${email}</strong>. Check your inbox.`, 'success');
   }
 
-  function socialLogin(provider) {
+  function socialLogin(provider, event) {
     const btn = event.target.closest('button');
     btn.disabled = true;
     btn.innerHTML = `<span class="loader"></span> Connecting…`;
@@ -151,7 +155,7 @@
       showAlert('⚠️ Please fill in all fields.', 'error');
       return;
     }
-    if (!email.includes('@') || !email.includes('.')) {
+    if (!isValidEmail(email)) {
       showAlert('⚠️ Please enter a valid email address.', 'error');
       return;
     }
