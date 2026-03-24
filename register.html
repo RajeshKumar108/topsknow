@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account – TopsKnow Cybersecurity</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">🛡</div>
+        Tops<span>Know</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="courses.html">Courses</a></li>
+      </ul>
+      <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-actions"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== REGISTER FORM ===== -->
+<main class="auth-page">
+  <div class="auth-card" style="max-width:520px">
+    <div class="auth-logo">
+      <div class="shield-sm">🛡️</div>
+      <h1 class="auth-title">Create your account</h1>
+      <p class="auth-subtitle">Join 142,000+ cybersecurity learners. Free to start.</p>
+    </div>
+
+    <div id="alert-area"></div>
+
+    <form class="auth-form" id="register-form" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="first-name">First name</label>
+          <input class="form-input" type="text" id="first-name" name="firstName"
+                 placeholder="Alex" autocomplete="given-name" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="last-name">Last name</label>
+          <input class="form-input" type="text" id="last-name" name="lastName"
+                 placeholder="Chen" autocomplete="family-name" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email address</label>
+        <input class="form-input" type="email" id="email" name="email"
+               placeholder="you@example.com" autocomplete="email" required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="role">I am a…</label>
+        <select class="form-input" id="role" name="role">
+          <option value="">Select your background</option>
+          <option value="student">Student / Learner</option>
+          <option value="professional">Security Professional</option>
+          <option value="developer">Developer</option>
+          <option value="sysadmin">System Administrator</option>
+          <option value="manager">IT Manager</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-wrap">
+          <input class="form-input input-icon-right" type="password" id="password" name="password"
+                 placeholder="At least 8 characters" autocomplete="new-password" required
+                 oninput="checkStrength(this.value)" />
+          <button type="button" class="input-icon-btn" onclick="togglePassword('password', this)" aria-label="Toggle password visibility">👁</button>
+        </div>
+        <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+        <div class="strength-label" id="strength-label"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="confirm-password">Confirm password</label>
+        <div class="input-wrap">
+          <input class="form-input input-icon-right" type="password" id="confirm-password"
+                 name="confirmPassword" placeholder="Repeat your password"
+                 autocomplete="new-password" required />
+          <button type="button" class="input-icon-btn" onclick="togglePassword('confirm-password', this)" aria-label="Toggle password visibility">👁</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-check">
+          <input type="checkbox" id="terms" required />
+          I agree to the <a href="#" onclick="return false">Terms of Service</a>
+          and <a href="#" onclick="return false">Privacy Policy</a>
+        </label>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-check">
+          <input type="checkbox" id="newsletter" checked />
+          Send me cybersecurity tips, course updates &amp; free resources
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full btn-lg mt-3" id="submit-btn">
+        🚀 Create Free Account
+      </button>
+    </form>
+
+    <div class="auth-divider">or sign up with</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <button class="btn btn-outline" onclick="socialSignup('Google')">
+        <span>🔵</span> Google
+      </button>
+      <button class="btn btn-outline" onclick="socialSignup('GitHub')">
+        <span>⚫</span> GitHub
+      </button>
+    </div>
+
+    <div class="auth-footer">
+      Already have an account? <a href="login.html" style="font-weight:700">Sign in →</a>
+    </div>
+  </div>
+</main>
+
+<script src="js/courses.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (Auth.isLoggedIn()) window.location.href = 'dashboard.html';
+  });
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  }
+
+  function showAlert(message, type = 'error') {
+    document.getElementById('alert-area').innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+  }
+  function clearAlert() {
+    document.getElementById('alert-area').innerHTML = '';
+  }
+
+  function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+    else { input.type = 'password'; btn.textContent = '👁'; }
+  }
+
+  function checkStrength(password) {
+    const fill  = document.getElementById('strength-fill');
+    const label = document.getElementById('strength-label');
+    if (!password) { fill.style.width = '0'; label.textContent = ''; return; }
+    let score = 0;
+    if (password.length >= 8)  score++;
+    if (password.length >= 12) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+    const levels = [
+      { pct: '20%', color: '#ef4444', text: 'Very weak' },
+      { pct: '40%', color: '#f97316', text: 'Weak' },
+      { pct: '60%', color: '#f59e0b', text: 'Fair' },
+      { pct: '80%', color: '#10b981', text: 'Strong' },
+      { pct: '100%', color: '#00d4ff', text: 'Very strong' }
+    ];
+    const lvl = levels[Math.min(score - 1, 4)] || levels[0];
+    fill.style.width = lvl.pct;
+    fill.style.background = lvl.color;
+    label.textContent = `Password strength: ${lvl.text}`;
+    label.style.color = lvl.color;
+  }
+
+  function socialSignup(provider) {
+    const btns = document.querySelectorAll('.btn-outline');
+    btns.forEach(b => b.disabled = true);
+    setTimeout(() => {
+      const user = {
+        name: provider === 'Google' ? 'Google User' : 'GitHub User',
+        email: `user@${provider.toLowerCase()}.com`,
+        provider
+      };
+      Auth.login(user);
+      Toast.show(`🎉 Account created with ${provider}!`, 'success');
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
+    }, 1200);
+  }
+
+  document.getElementById('register-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    clearAlert();
+
+    const firstName = document.getElementById('first-name').value.trim();
+    const lastName  = document.getElementById('last-name').value.trim();
+    const email     = document.getElementById('email').value.trim();
+    const password  = document.getElementById('password').value;
+    const confirm   = document.getElementById('confirm-password').value;
+    const terms     = document.getElementById('terms').checked;
+
+    if (!firstName || !lastName) { showAlert('⚠️ Please enter your first and last name.'); return; }
+    if (!email || !isValidEmail(email)) { showAlert('⚠️ Please enter a valid email address.'); return; }
+    if (password.length < 8) { showAlert('⚠️ Password must be at least 8 characters.'); return; }
+    if (password !== confirm) { showAlert('⚠️ Passwords do not match.'); return; }
+    if (!terms) { showAlert('⚠️ You must agree to the Terms of Service to continue.'); return; }
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span> Creating account…';
+
+    setTimeout(() => {
+      const user = { name: `${firstName} ${lastName}`, email };
+      Auth.login(user);
+      Toast.show('🎉 Welcome to TopsKnow! Your account is ready.', 'success', 4000);
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+    }, 1200);
+  });
+</script>
+</body>
+</html>

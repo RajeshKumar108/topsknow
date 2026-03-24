@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard – TopsKnow Cybersecurity</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">🛡</div>
+        Tops<span>Know</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="courses.html">Courses</a></li>
+        <li><a href="dashboard.html" class="active">Dashboard</a></li>
+      </ul>
+      <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-actions"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== DASHBOARD CONTENT ===== -->
+<main class="dashboard-page">
+  <div class="container" id="dashboard-root">
+    <!-- Rendered by JS -->
+    <div style="text-align:center;padding:80px 0">
+      <div class="loader"></div>
+    </div>
+  </div>
+</main>
+
+<script src="js/courses.js"></script>
+<script src="js/app.js"></script>
+<script>
+  function getDaysRemaining(dueDateStr) {
+    const due  = new Date(dueDateStr);
+    const now  = new Date();
+    const diff = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
+    return diff;
+  }
+
+  function dueDateLabel(enrollment) {
+    if (!enrollment.dueDate) return '';
+    const days = getDaysRemaining(enrollment.dueDate);
+    if (days < 0) return `<span class="due-date overdue">Overdue by ${Math.abs(days)}d</span>`;
+    if (days === 0) return `<span class="due-date overdue">Due today!</span>`;
+    if (days <= 5) return `<span class="due-date">Due in ${days}d</span>`;
+    return `<span class="due-date" style="background:rgba(16,185,129,0.1);color:var(--color-success)">${days} days left</span>`;
+  }
+
+  function renderDashboard() {
+    const user        = Auth.getUser();
+    const enrollments = Enrollment.getAll();
+    const root        = document.getElementById('dashboard-root');
+
+    if (!user) {
+      root.innerHTML = `
+        <div style="text-align:center;padding:80px 0">
+          <div style="font-size:3rem;margin-bottom:16px">🔒</div>
+          <h2 style="margin-bottom:12px">Please log in</h2>
+          <p style="color:var(--color-text-muted);margin-bottom:24px">You need to be signed in to view your dashboard.</p>
+          <div style="display:flex;gap:12px;justify-content:center">
+            <a href="login.html" class="btn btn-primary btn-lg">Sign In</a>
+            <a href="register.html" class="btn btn-outline btn-lg">Create Account</a>
+          </div>
+        </div>`;
+      return;
+    }
+
+    const userName  = user.name || 'Learner';
+    const initials  = userName.split(' ').map(p => p[0]).join('').toUpperCase().slice(0,2);
+    const completed = enrollments.filter(e => e.progress >= 100).length;
+    const active    = enrollments.filter(e => e.progress > 0 && e.progress < 100).length;
+    const totalHours = enrollments.reduce((sum, e) => {
+      const c = getCourseById(e.courseId);
+      return c ? sum + parseInt(c.duration) : sum;
+    }, 0);
+
+    // Activity feed (simulated)
+    const activities = [
+      { color: 'var(--color-primary)', text: 'Enrolled in <strong>Ethical Hacking & Penetration Testing</strong>', time: '2 hours ago' },
+      { color: 'var(--color-success)', text: 'Completed module <strong>Reconnaissance & Footprinting</strong>', time: '1 day ago' },
+      { color: 'var(--color-warning)', text: 'Earned badge <strong>First Login</strong>', time: '2 days ago' },
+      { color: 'var(--color-accent)',  text: 'Joined <strong>Discord Community</strong>', time: '2 days ago' },
+    ];
+
+    const enrolledHtml = enrollments.length === 0
+      ? `<div style="text-align:center;padding:48px 0;border:1px dashed var(--color-border);border-radius:var(--radius-md)">
+           <div style="font-size:2.5rem;margin-bottom:12px">📚</div>
+           <h3 style="margin-bottom:8px">No courses yet</h3>
+           <p style="color:var(--color-text-muted);margin-bottom:20px">Borrow your first course and start learning today.</p>
+           <a href="courses.html" class="btn btn-primary">Browse Courses</a>
+         </div>`
+      : `<div class="enrolled-list">
+          ${enrollments.map(e => {
+            const course = getCourseById(e.courseId);
+            const bgStyle = course ? course.bgColor : 'linear-gradient(135deg,#1a2235,#0f1724)';
+            return `
+              <div class="enrolled-item">
+                <div class="enrolled-thumb" style="background:${bgStyle}">
+                  ${e.emoji}
+                </div>
+                <div class="enrolled-info">
+                  <div class="enrolled-title">${e.title}</div>
+                  <div class="enrolled-instructor">by ${e.instructor}</div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width:${e.progress}%"></div>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+                    <div class="progress-label">${e.progress}% complete</div>
+                    ${dueDateLabel(e)}
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0">
+                  <a href="course-detail.html?id=${e.courseId}" class="btn btn-primary btn-sm">Continue</a>
+                  <button class="btn btn-outline btn-sm" onclick="simulateProgress(${e.courseId})">+10%</button>
+                </div>
+              </div>`}).join('')}
+         </div>`;
+
+    root.innerHTML = `
+      <!-- Header -->
+      <div class="dashboard-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+        <div>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px">
+            <div class="nav-avatar" style="width:52px;height:52px;font-size:1.2rem">${initials}</div>
+            <div>
+              <div class="dashboard-greeting">Hello, <span>${userName.split(' ')[0]}</span> 👋</div>
+              <div style="font-size:0.9rem;color:var(--color-text-muted)">${user.email}</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a href="courses.html" class="btn btn-primary">+ Borrow a Course</a>
+          <button class="btn btn-outline" onclick="Auth.logout()">Logout</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-number">${enrollments.length}</div>
+          <div class="stat-label">Courses Borrowed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">▶️</div>
+          <div class="stat-number">${active}</div>
+          <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-number">${completed}</div>
+          <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏱</div>
+          <div class="stat-number">${totalHours}</div>
+          <div class="stat-label">Hours of Content</div>
+        </div>
+      </div>
+
+      <!-- Main grid -->
+      <div class="dashboard-grid">
+        <div>
+          <div class="section-heading">📚 My Borrowed Courses</div>
+          ${enrolledHtml}
+        </div>
+
+        <div>
+          <!-- Recommended -->
+          <div class="section-heading">⚡ Recommended for You</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px">
+            ${COURSES.filter(c => !enrollments.some(e => e.courseId === c.id)).slice(0,3).map(c => `
+              <div class="enrolled-item" onclick="window.location='course-detail.html?id=${c.id}'" style="cursor:pointer">
+                <div class="enrolled-thumb" style="background:${c.bgColor}">${c.emoji}</div>
+                <div class="enrolled-info">
+                  <div class="enrolled-title">${c.title}</div>
+                  <div class="enrolled-instructor">${c.level} · ${c.duration}</div>
+                  <div style="font-size:0.82rem;color:var(--color-warning)">★ ${c.rating}</div>
+                </div>
+                <span class="badge badge-primary" style="flex-shrink:0">${c.price === 0 ? 'FREE' : '$'+c.price}</span>
+              </div>`).join('')}
+          </div>
+
+          <!-- Recent activity -->
+          <div class="section-heading">🕐 Recent Activity</div>
+          <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:20px">
+            <div class="activity-list">
+              ${activities.map(a => `
+                <div class="activity-item">
+                  <div class="activity-dot" style="background:${a.color}"></div>
+                  <div>
+                    <div class="activity-text">${a.text}</div>
+                    <div class="activity-time">${a.time}</div>
+                  </div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    // Animate stat numbers
+    document.querySelectorAll('.stat-number').forEach(el => {
+      const target = parseInt(el.textContent, 10);
+      if (!isNaN(target) && target > 0) {
+        el.textContent = '0';
+        animateCounter(el, target);
+      }
+    });
+  }
+
+  function simulateProgress(courseId) {
+    const list = Enrollment.getAll();
+    const item = list.find(e => e.courseId === courseId);
+    if (!item) return;
+    const newProgress = Math.min(100, item.progress + 10);
+    Enrollment.updateProgress(courseId, newProgress);
+    Toast.show(newProgress >= 100 ? '🏆 Course completed! Certificate available.' : `✅ Progress updated: ${newProgress}%`, 'success');
+    renderDashboard();
+  }
+
+  document.addEventListener('DOMContentLoaded', renderDashboard);
+</script>
+</body>
+</html>

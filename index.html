@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TopsKnow – Cybersecurity Course Lending Platform</title>
+  <meta name="description" content="Borrow and learn from industry-leading cybersecurity courses. Ethical hacking, cloud security, DFIR, and more." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">🛡</div>
+        Tops<span>Know</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="courses.html">Courses</a></li>
+        <li><a href="courses.html?category=Certification">Certifications</a></li>
+        <li><a href="courses.html?category=Penetration+Testing">Pentesting</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+      </ul>
+      <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-actions">
+        <!-- Populated by app.js -->
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <div class="hero-tag">
+          <span class="dot"></span>
+          New: Malware Analysis & Reverse Engineering available now
+        </div>
+        <h1>
+          Master<br/>
+          <span class="highlight">Cybersecurity</span><br/>
+          Borrow &amp; Learn
+        </h1>
+        <p>
+          Access premium cybersecurity courses on demand. Borrow for days or weeks,
+          learn at your own pace, and build real-world defensive and offensive skills.
+        </p>
+        <div class="hero-actions">
+          <a href="courses.html" class="btn btn-primary btn-lg">
+            🚀 Browse Courses
+          </a>
+          <a href="register.html" class="btn btn-outline btn-lg">
+            Sign Up Free
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-number" data-counter="142000" data-suffix="+">0+</div>
+            <div class="hero-stat-label">Students Enrolled</div>
+          </div>
+          <div>
+            <div class="hero-stat-number" data-counter="9" data-suffix="">0</div>
+            <div class="hero-stat-label">Expert Courses</div>
+          </div>
+          <div>
+            <div class="hero-stat-number" data-counter="48" data-suffix="+">0+</div>
+            <div class="hero-stat-label">Industry Certifications</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="cyber-shield">
+          <div class="shield-outer"></div>
+          <div class="shield-inner">
+            <div class="shield-icon">🛡️</div>
+          </div>
+        </div>
+        <div class="floating-badges">
+          <div class="float-badge"><span>🔓</span> Ethical Hacking</div>
+          <div class="float-badge"><span>☁️</span> Cloud Security</div>
+          <div class="float-badge"><span>🔬</span> DFIR</div>
+          <div class="float-badge"><span>📋</span> CompTIA Security+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-tag">Why TopsKnow</div>
+      <h2 class="section-title">Learn smarter, not harder</h2>
+      <p class="section-subtitle">Flexible course lending gives you access to expert content without long-term commitments.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon cyan">📚</div>
+        <h3>Flexible Borrowing</h3>
+        <p>Borrow courses for 14–30 days. Pay only for what you use. Renew anytime if you need more time.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon purple">🔒</div>
+        <h3>Expert-Vetted Content</h3>
+        <p>Every course is created by certified security professionals — OSCP, CEH, GREM, and more.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green">🧪</div>
+        <h3>Hands-On Labs</h3>
+        <p>Practice in real environments. Virtual labs, CTF challenges, and sandbox malware analysis included.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon yellow">🏆</div>
+        <h3>Verifiable Certificates</h3>
+        <p>Earn blockchain-verified completion certificates that you can share on LinkedIn and your resume.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon cyan">⚡</div>
+        <h3>Instant Access</h3>
+        <p>No waiting. Borrow and start watching immediately. Offline downloads included for mobile learning.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon purple">🌐</div>
+        <h3>Community &amp; Mentorship</h3>
+        <p>Join 140k+ learners on Discord. Get help from instructors and study partners around the world.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURED COURSES ===== -->
+<section class="section" style="background:var(--color-surface); border-top:1px solid var(--color-border); border-bottom:1px solid var(--color-border)">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-tag">Courses</div>
+      <h2 class="section-title">Top Cybersecurity Courses</h2>
+      <p class="section-subtitle">From ethical hacking to cloud security — we have the right course for every level.</p>
+    </div>
+    <div class="courses-grid" id="featured-courses">
+      <!-- Rendered by JS -->
+    </div>
+    <div class="text-center mt-4">
+      <a href="courses.html" class="btn btn-outline btn-lg">View All Courses →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="section">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-tag">Testimonials</div>
+      <h2 class="section-title">What our learners say</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"TopsKnow's Ethical Hacking course helped me pass my OSCP exam on the first attempt. The lab environment is incredibly realistic and the instructor is top-notch."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">JD</div>
+          <div>
+            <div class="testimonial-name">Jake Donovan</div>
+            <div class="testimonial-role">Penetration Tester @ CrowdStrike</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"The course lending model is genius. I borrowed the Cloud Security course for 30 days while preparing for an AWS job interview. Got the job! 100% worth it."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">AM</div>
+          <div>
+            <div class="testimonial-name">Aisha Mohammed</div>
+            <div class="testimonial-role">Cloud Security Engineer @ Amazon</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Started with the free Cybersecurity for Beginners course and now I'm studying for my Security+ exam. The learning path is really well structured."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">KL</div>
+          <div>
+            <div class="testimonial-name">Kevin Liu</div>
+            <div class="testimonial-role">IT Student → Junior SOC Analyst</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="cta-banner">
+      <div class="section-tag">Get Started</div>
+      <h2>Start Your Cybersecurity Journey Today</h2>
+      <p>Join 142,000+ learners. Browse free courses or borrow a premium course for less than a Netflix subscription.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+        <a href="register.html" class="btn btn-primary btn-lg">Create Free Account</a>
+        <a href="courses.html" class="btn btn-outline btn-lg">Browse Courses</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo" style="margin-bottom:0">
+          <div class="logo-icon">🛡</div>
+          Tops<span>Know</span>
+        </a>
+        <p>The premier cybersecurity course lending platform. Learn from the best, borrow what you need, achieve your goals.</p>
+        <div class="social-links mt-3">
+          <a href="#" class="social-link" aria-label="Twitter">𝕏</a>
+          <a href="#" class="social-link" aria-label="LinkedIn">in</a>
+          <a href="#" class="social-link" aria-label="Discord">💬</a>
+          <a href="#" class="social-link" aria-label="YouTube">▶</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Courses</h4>
+        <a href="courses.html?category=Penetration+Testing">Penetration Testing</a>
+        <a href="courses.html?category=Network+Security">Network Security</a>
+        <a href="courses.html?category=Cloud+Security">Cloud Security</a>
+        <a href="courses.html?category=DFIR">Digital Forensics</a>
+        <a href="courses.html?category=Certification">Certifications</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a href="register.html">Create Account</a>
+        <a href="login.html">Login</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#">My Certificates</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About Us</a>
+        <a href="#">Blog</a>
+        <a href="#">Careers</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 TopsKnow. All rights reserved.</span>
+      <span>🔒 Secure &amp; encrypted platform</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/courses.js"></script>
+<script src="js/app.js"></script>
+<script>
+  // Render featured courses (first 6)
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('featured-courses');
+    const featured = filterCourses({ sortBy: 'popular' }).slice(0, 6);
+    container.innerHTML = featured.map(buildCourseCard).join('');
+  });
+</script>
+</body>
+</html>

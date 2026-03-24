@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Course Detail – TopsKnow Cybersecurity</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">🛡</div>
+        Tops<span>Know</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="courses.html" class="active">Courses</a></li>
+        <li><a href="courses.html?category=Certification">Certifications</a></li>
+        <li><a href="courses.html?category=Penetration+Testing">Pentesting</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+      </ul>
+      <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-actions"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== CONTENT (rendered by JS) ===== -->
+<div id="page-content">
+  <!-- Skeleton -->
+  <div class="course-detail-hero">
+    <div class="container">
+      <div style="height:320px;display:flex;align-items:center;justify-content:center;color:var(--color-text-muted)">
+        <div class="loader"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/courses.js"></script>
+<script src="js/app.js"></script>
+<script>
+  function renderCourseDetail(course) {
+    if (!course) {
+      document.getElementById('page-content').innerHTML = `
+        <div style="padding:160px 0;text-align:center">
+          <div style="font-size:3rem;margin-bottom:16px">🔍</div>
+          <h2 style="margin-bottom:12px">Course Not Found</h2>
+          <p style="color:var(--color-text-muted);margin-bottom:24px">We couldn't find the course you're looking for.</p>
+          <a href="courses.html" class="btn btn-primary">Browse All Courses</a>
+        </div>`;
+      return;
+    }
+
+    document.title = `${course.title} – TopsKnow`;
+    const levelClass = course.level === 'Beginner' ? 'success' : course.level === 'Advanced' ? 'danger' : 'warning';
+    const enrolled = typeof Enrollment !== 'undefined' && Enrollment.isEnrolled(course.id);
+    const priceLabel = course.price === 0 ? 'FREE' : `$${course.price}`;
+    const priceSub   = course.price === 0 ? 'Unlimited access' : `${course.lendDays}-day borrow period`;
+
+    // Availability
+    let availHtml = '';
+    if (course.price === 0) {
+      availHtml = `<p class="enroll-availability" style="color:var(--color-success)">✅ Unlimited seats available</p>`;
+    } else if (course.available === 0) {
+      availHtml = `<p class="enroll-availability" style="color:var(--color-danger)">⛔ Fully booked – join waitlist</p>`;
+    } else if (course.available <= 3) {
+      availHtml = `<p class="enroll-availability" style="color:var(--color-warning)">⚠️ Only ${course.available} seat${course.available===1?'':'s'} left!</p>`;
+    } else {
+      availHtml = `<p class="enroll-availability">${course.available} of ${course.totalSeats} seats available</p>`;
+    }
+
+    const enrollBtnHtml = enrolled
+      ? `<a href="dashboard.html" class="btn btn-primary btn-full btn-lg">▶ Continue Learning</a>`
+      : course.available === 0
+        ? `<button class="btn btn-outline btn-full btn-lg" onclick="joinWaitlist(${course.id})">Join Waitlist</button>`
+        : `<button class="btn btn-primary btn-full btn-lg" id="enroll-btn" onclick="handleEnroll(${course.id})">
+            ${course.price === 0 ? '🚀 Enroll Free' : `🔓 Borrow for ${priceLabel}`}
+           </button>`;
+
+    const modulesHtml = course.modules.map((mod, mi) => `
+      <div class="module${mi === 0 ? ' open' : ''}" id="module-${mi}">
+        <div class="module-header" onclick="toggleModule(${mi})">
+          <div>
+            <div class="module-title">${mod.title}</div>
+            <div class="module-meta">${mod.lessons.length} lessons</div>
+          </div>
+          <span class="module-chevron">▼</span>
+        </div>
+        <ul class="module-lessons">
+          ${mod.lessons.map((lesson, li) => `
+            <li class="lesson-item">
+              <span class="lesson-icon">${mod.free.includes(li) ? '▶' : '🔒'}</span>
+              <span>${lesson}</span>
+              ${mod.free.includes(li) ? '<span class="lesson-free badge badge-success">Free</span>' : ''}
+            </li>`).join('')}
+        </ul>
+      </div>`).join('');
+
+    const tagsHtml = course.tags.map(t => `<span class="tag">${t}</span>`).join('');
+
+    document.getElementById('page-content').innerHTML = `
+      <!-- Course Hero -->
+      <div class="course-detail-hero">
+        <div class="container">
+          <p class="course-breadcrumb">
+            <a href="index.html">Home</a> › <a href="courses.html">Courses</a> › <a href="courses.html?category=${encodeURIComponent(course.category)}">${course.category}</a>
+          </p>
+          <div class="course-detail-grid">
+            <div>
+              <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+                <span class="badge badge-${levelClass}">${course.level}</span>
+                <span class="badge badge-primary">${course.category}</span>
+                ${course.isNew ? '<span class="badge badge-success">New</span>' : ''}
+              </div>
+              <h1 class="course-detail-title">${course.title}</h1>
+              <p style="color:var(--color-text-muted);font-size:1.05rem;max-width:640px">${course.description}</p>
+              <div class="course-detail-meta">
+                <span>⏱ ${course.duration}</span>
+                <span>📚 ${course.lessons} lessons</span>
+                <span>👥 ${course.students.toLocaleString()} students</span>
+                <span>⭐ ${course.rating} (${course.reviews.toLocaleString()} reviews)</span>
+              </div>
+              <div style="margin:12px 0;display:flex;gap:8px;flex-wrap:wrap">${tagsHtml}</div>
+              <div class="instructor-info">
+                <div class="instructor-avatar">${course.instructor.charAt(0)}</div>
+                <div>
+                  <div class="instructor-name">${course.instructor}</div>
+                  <div class="instructor-role">${course.instructorRole}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Enroll Card -->
+            <div class="enroll-card" id="enroll-card">
+              <div class="course-emoji">${course.emoji}</div>
+              <div class="enroll-price ${course.price === 0 ? 'free' : ''}">${priceLabel}</div>
+              <p style="text-align:center;font-size:0.85rem;color:var(--color-text-muted);margin-bottom:4px">${priceSub}</p>
+              ${availHtml}
+              ${enrollBtnHtml}
+              <ul class="enroll-features mt-3">
+                ${course.includes.map(item => `<li><span class="check">✓</span>${item}</li>`).join('')}
+              </ul>
+              <p style="font-size:0.78rem;color:var(--color-text-muted);text-align:center;margin-top:12px">
+                🔒 Secure checkout · 7-day money-back guarantee
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Curriculum -->
+      <section class="section">
+        <div class="container">
+          <div class="curriculum-section">
+            <h2>Course Curriculum</h2>
+            <p style="color:var(--color-text-muted);margin-bottom:24px">
+              ${course.modules.length} modules · ${course.lessons} lessons · ${course.duration} total
+            </p>
+            ${modulesHtml}
+          </div>
+
+          <!-- More info -->
+          <div style="margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px">
+            <div class="feature-card">
+              <div class="feature-icon green">🎯</div>
+              <h3>Who this course is for</h3>
+              <p style="font-size:0.88rem">
+                ${course.level === 'Beginner' ? 'Anyone new to cybersecurity looking to start their journey.' :
+                  course.level === 'Intermediate' ? 'Security professionals looking to deepen their expertise.' :
+                  'Experienced practitioners wanting to master advanced techniques.'}
+              </p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon cyan">📋</div>
+              <h3>Prerequisites</h3>
+              <p style="font-size:0.88rem">
+                ${course.level === 'Beginner' ? 'No prior experience needed. Basic computer literacy sufficient.' :
+                  course.level === 'Intermediate' ? 'Basic networking and Linux knowledge recommended.' :
+                  'Strong networking fundamentals and scripting experience required.'}
+              </p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon purple">🏆</div>
+              <h3>What you'll achieve</h3>
+              <p style="font-size:0.88rem">Earn a verifiable certificate of completion to share on LinkedIn and add to your resume.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer>
+        <div class="container">
+          <div class="footer-bottom">
+            <span>© 2025 TopsKnow. All rights reserved.</span>
+            <a href="courses.html" style="color:var(--color-primary)">← Back to Courses</a>
+          </div>
+        </div>
+      </footer>`;
+
+    // Re-init animations
+    setTimeout(() => initAnimations(), 100);
+  }
+
+  function toggleModule(index) {
+    const mod = document.getElementById(`module-${index}`);
+    if (mod) mod.classList.toggle('open');
+  }
+
+  function handleEnroll(courseId) {
+    const user = Auth.getUser();
+    if (!user) {
+      Toast.show('Please log in to borrow this course.', 'info');
+      setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+      return;
+    }
+    const course = getCourseById(courseId);
+    if (!course) return;
+    const btn = document.getElementById('enroll-btn');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loader"></span> Processing…';
+    }
+    setTimeout(() => {
+      const success = Enrollment.enroll(course);
+      if (success) {
+        Toast.show(`🎉 You've successfully borrowed "${course.title}"!`, 'success', 4000);
+        setTimeout(() => renderCourseDetail(course), 400);
+      } else {
+        Toast.show('You are already enrolled in this course.', 'info');
+        if (btn) { btn.disabled = false; btn.innerHTML = 'Already Enrolled'; }
+      }
+    }, 900);
+  }
+
+  function joinWaitlist(courseId) {
+    const user = Auth.getUser();
+    if (!user) {
+      Toast.show('Please log in to join the waitlist.', 'info');
+      setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+      return;
+    }
+    Toast.show('✅ You have been added to the waitlist. We\'ll email you when a seat opens.', 'success', 5000);
+  }
+
+  // Load course on page ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    const course = getCourseById(id);
+    renderCourseDetail(course);
+  });
+</script>
+</body>
+</html>
